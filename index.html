@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuiz ASK - Cikgu Wi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Quicksand:wght@500;600;700&display=swap');
+        
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: linear-gradient(135deg, #fce7f3 0%, #e0e7ff 50%, #ccfbf1 100%);
+            color: #1e293b;
+            min-height: 100vh;
+        }
+
+        .font-fredoka {
+            font-family: 'Fredoka', sans-serif;
+        }
+
+        .bright-card {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(16px);
+            border: 3px solid #f472b6;
+            box-shadow: 0 20px 40px rgba(244, 114, 182, 0.2);
+        }
+
+        .option-btn {
+            border: 2px solid #fbcfe8;
+            background: #ffffff;
+            transition: all 0.2s ease;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            border-color: #ec4899;
+            background: #fdf2f8;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(236, 72, 153, 0.2);
+        }
+
+        .option-btn.correct {
+            border-color: #10b981 !important;
+            background: #d1fae5 !important;
+            color: #047857 !important;
+        }
+
+        .option-btn.wrong {
+            border-color: #ef4444 !important;
+            background: #fee2e2 !important;
+            color: #b91c1c !important;
+        }
+
+        .btn-action {
+            transition: all 0.2s ease;
+            box-shadow: 0 6px 20px rgba(236, 72, 153, 0.3);
+        }
+
+        .btn-action:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(236, 72, 153, 0.5);
+        }
+
+        .spinner {
+            border: 4px solid #fbcfe8;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border-left-color: #ec4899;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center p-4 relative overflow-x-hidden">
+
+    <div class="max-w-2xl w-full z-10 my-6">
+        
+        <!-- HEADER DENGAN GAMBAR BANNER & LOGO -->
+        <div class="bright-card rounded-3xl overflow-hidden mb-6 relative">
+            <div class="relative h-48 sm:h-60 bg-cover bg-center flex items-end p-6" style="background-image: linear-gradient(to top, rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.1)), url('banner.jpg');">
+                
+                <!-- LOGO CIKGU WI -->
+                <div class="absolute top-4 right-4 w-20 h-20 sm:w-28 sm:h-28 rounded-full border-4 border-white shadow-lg overflow-hidden bg-white">
+                    <img src="logo.png" alt="ASK Cikgu Wi Logo" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/150?text=Logo+Cikgu+Wi'">
+                </div>
+
+                <div>
+                    <span class="bg-pink-500 text-white font-bold px-3 py-1 rounded-full text-xs uppercase tracking-wider font-fredoka shadow-md">
+                        <i class="fa-solid fa-heart mr-1"></i> ASK Cikgu Wi
+                    </span>
+                    <h1 class="text-2xl sm:text-4xl font-extrabold text-white font-fredoka mt-2 drop-shadow-md">
+                        CABARAN NOMBOR ASAS 10 & 8 🚀
+                    </h1>
+                    <p class="text-xs sm:text-sm text-pink-200 font-medium">Penukaran Nombor Perpuluhan & Lapanan</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- MAIN CONTAINER -->
+        <div class="bright-card rounded-3xl p-6 sm:p-8 relative">
+
+            <!-- ================= SCREEN 1: DAFTAR MURID ================= -->
+            <div id="screen-setup" class="space-y-6">
+                <div class="text-center pb-4 border-b border-pink-200">
+                    <h2 class="text-2xl font-bold text-pink-600 font-fredoka">Selamat Datang, Murid Hebat! 👋</h2>
+                    <p class="text-xs sm:text-sm text-slate-500 mt-1">Sila masukkan nama dan kelas anda untuk memulakan kuiz.</p>
+                </div>
+
+                <form id="form-setup" onsubmit="startQuiz(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-pink-600 uppercase tracking-wider mb-2">
+                            <i class="fa-solid fa-user text-pink-400 mr-1"></i> Nama Penuh Murid
+                        </label>
+                        <input type="text" id="input-nama" required placeholder="Contoh: Nur Aishah binti Razak"
+                            class="w-full bg-slate-50 border-2 border-pink-200 focus:border-pink-500 rounded-xl px-4 py-3 text-slate-800 outline-none font-medium transition">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-pink-600 uppercase tracking-wider mb-2">
+                            <i class="fa-solid fa-school text-pink-400 mr-1"></i> Kelas
+                        </label>
+                        <input type="text" id="input-kelas" required placeholder="Contoh: 2 Cerdik"
+                            class="w-full bg-slate-50 border-2 border-pink-200 focus:border-pink-500 rounded-xl px-4 py-3 text-slate-800 outline-none font-medium transition">
+                    </div>
+
+                    <button type="submit" class="btn-action w-full bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 hover:from-pink-600 hover:to-indigo-600 text-white font-bold py-4 px-6 rounded-2xl text-center font-fredoka text-lg tracking-wide mt-2">
+                        MULA BERMAIN SEKARANG <i class="fa-solid fa-play ml-2"></i>
+                    </button>
+                </form>
+            </div>
+
+            <!-- ================= SCREEN 2: SOALAN KUIZ ================= -->
+            <div id="screen-quiz" class="hidden space-y-6">
+                
+                <div class="flex items-center justify-between bg-pink-50/80 p-3 sm:p-4 rounded-2xl border border-pink-200">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center text-white font-bold font-fredoka text-lg shadow-md">
+                            <span id="q-current">1</span>/15
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-400 font-semibold">Jenis Soalan</p>
+                            <p id="q-category" class="text-xs sm:text-sm text-pink-600 font-bold font-fredoka">Asas 10 → Asas 8</p>
+                        </div>
+                    </div>
+
+                    <div class="text-right">
+                        <p class="text-xs text-slate-400 font-semibold">Markah Terkumpul</p>
+                        <p id="score-display" class="text-xl sm:text-2xl font-extrabold text-pink-600 font-fredoka">0</p>
+                    </div>
+                </div>
+
+                <div class="w-full bg-pink-100 h-3 rounded-full overflow-hidden p-0.5 border border-pink-200">
+                    <div id="progress-bar" class="bg-gradient-to-r from-pink-400 to-purple-500 h-full w-0 rounded-full transition-all duration-300"></div>
+                </div>
+
+                <div class="bg-gradient-to-r from-purple-900 to-indigo-900 p-6 rounded-2xl border-2 border-pink-300 text-center space-y-2">
+                    <p class="text-xs sm:text-sm text-pink-200 font-semibold" id="q-instruction">Tukarkan nombor berikut:</p>
+                    <div class="text-3xl sm:text-5xl font-extrabold text-yellow-300 font-fredoka py-3 tracking-wider drop-shadow" id="q-text">
+                        --
+                    </div>
+                </div>
+
+                <div id="options-container" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+
+                <div id="explanation-box" class="hidden bg-pink-50/90 border-2 border-pink-300 p-4 rounded-2xl space-y-2">
+                    <div class="flex items-center gap-2 text-pink-700 font-bold text-sm sm:text-base font-fredoka">
+                        <i class="fa-solid fa-lightbulb text-amber-500 text-lg"></i>
+                        <span>Langkah Penyelesaian:</span>
+                    </div>
+                    <p id="explanation-text" class="text-xs sm:text-sm text-slate-700 leading-relaxed font-mono whitespace-pre-line bg-white p-3 rounded-xl border border-pink-200"></p>
+                </div>
+
+                <button id="btn-next" onclick="nextQuestion()" disabled class="btn-action w-full bg-slate-200 text-slate-400 font-bold py-3.5 px-6 rounded-2xl text-center font-fredoka text-base tracking-wide transition cursor-not-allowed">
+                    SOALAN SETERUSNYA <i class="fa-solid fa-circle-arrow-right ml-2"></i>
+                </button>
+            </div>
+
+            <!-- ================= SCREEN 3: KEPUTUSAN ================= -->
+            <div id="screen-result" class="hidden text-center space-y-6">
+                <div class="inline-block p-4 rounded-full bg-pink-100 border-2 border-pink-300 text-pink-500 text-5xl shadow-lg">
+                    🏆
+                </div>
+                <h2 class="text-3xl font-extrabold text-pink-600 font-fredoka">TAHNIAH & SYABAS!</h2>
+
+                <div class="bg-slate-50 p-5 rounded-2xl border-2 border-pink-200 text-left space-y-3">
+                    <div class="flex justify-between border-b border-pink-100 pb-2">
+                        <span class="text-xs text-slate-500">Nama Murid:</span>
+                        <span id="res-nama" class="text-xs font-bold text-pink-600">--</span>
+                    </div>
+                    <div class="flex justify-between border-b border-pink-100 pb-2">
+                        <span class="text-xs text-slate-500">Kelas:</span>
+                        <span id="res-kelas" class="text-xs font-bold text-pink-600">--</span>
+                    </div>
+                    <div class="flex justify-between border-b border-pink-100 pb-2">
+                        <span class="text-xs text-slate-500">Jumlah Jawapan Betul:</span>
+                        <span id="res-correct" class="text-xs font-bold text-emerald-600">0 / 15</span>
+                    </div>
+                    <div class="flex justify-between items-center pt-2">
+                        <span class="text-base font-bold text-slate-700 font-fredoka">Peratusan Markah:</span>
+                        <span id="res-percentage" class="text-3xl font-extrabold text-pink-600 font-fredoka">0%</span>
+                    </div>
+                </div>
+
+                <div id="sheet-status" class="bg-pink-50 border border-pink-200 p-4 rounded-2xl flex items-center justify-center gap-3">
+                    <div id="status-icon" class="spinner"></div>
+                    <p id="status-text" class="text-xs sm:text-sm text-pink-600 font-semibold">Menghantar keputusan ke Google Sheet Cikgu Wi...</p>
+                </div>
+
+                <button onclick="restartQuiz()" class="btn-action w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-bold py-3.5 px-6 rounded-2xl font-fredoka">
+                    <i class="fa-solid fa-rotate-right mr-2"></i> MAIN SEAKALI LAGI
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwA6xJ_xqpPqnxVm2u-boYebWgdEjQqN_Sf6Op8bTTvNeAUe0Z8c96qLPrL1x1xYuht/exec";
+
+        const quizData = [
+            { type: "10to8", questionText: "45₁₀", instruction: "Tukarkan nombor Asas 10 berikut kepada Asas 8:", correctAnswer: "55₈", options: ["55₈", "53₈", "45₈", "61₈"], explanation: "Langkah Pembahagian dengan 8:\n45 ÷ 8 = 5 baki 5\n5 ÷ 8 = 0 baki 5\nBaca baki dari bawah ke atas ➔ 55₈" },
+            { type: "10to8", questionText: "78₁₀", instruction: "Tukarkan nombor Asas 10 berikut kepada Asas 8:", correctAnswer: "116₈", options: ["114₈", "116₈", "122₈", "96₈"], explanation: "Langkah Pembahagian dengan 8:\n78 ÷ 8 = 9 baki 6\n9 ÷ 8 = 1 baki 1\n1 ÷ 8 = 0 baki 1\nBaca baki dari bawah ke atas ➔ 116₈" },
+            { type: "10to8", questionText: "95₁₀", instruction: "Tukarkan nombor Asas 10 berikut kepada Asas 8:", correctAnswer: "137₈", options: ["137₈", "127₈", "147₈", "135₈"], explanation: "Langkah Pembahagian dengan 8:\n95 ÷ 8 = 11 baki 7\n11 ÷ 8 = 1 baki 3\n1 ÷ 8 = 0 baki 1\nBaca baki dari bawah ke atas ➔ 137₈" },
+            { type: "10to8", questionText: "120₁₀", instruction: "Tukarkan nombor Asas 10 berikut kepada Asas 8:", correctAnswer: "170₈", options: ["160₈", "170₈", "150₈", "172₈"], explanation: "Langkah Pembahagian dengan 8:\n120 ÷ 8 = 15 baki 0\n15 ÷ 8 = 1 baki 7\n1 ÷ 8 = 0 baki 1\nBaca baki dari bawah ke atas ➔ 170₈" },
+            { type: "10to8", questionText: "215₁₀", instruction: "Tukarkan nombor Asas 10 berikut kepada Asas 8:", correctAnswer: "327₈", options: ["317₈", "337₈", "327₈", "227₈"], explanation: "Langkah Pembahagian dengan 8:\n215 ÷ 8 = 26 baki 7\n26 ÷ 8 = 3 baki 2\n3 ÷ 8 = 0 baki 3\nBaca baki dari bawah ke atas ➔ 327₈" },
+            { type: "10to8", questionText: "64₁₀", instruction: "Tukarkan nombor Asas 10 berikut kepada Asas 8:", correctAnswer: "100₈", options: ["80₈", "100₈", "108₈", "110₈"], explanation: "Langkah Pembahagian dengan 8:\n64 ÷ 8 = 8 baki 0\n8 ÷ 8 = 1 baki 0\n1 ÷ 8 = 0 baki 1\nBaca baki dari bawah ke atas ➔ 100₈" },
+            { type: "10to8", questionText: "150₁₀", instruction: "Tukarkan nombor Asas 10 berikut kepada Asas 8:", correctAnswer: "226₈", options: ["226₈", "216₈", "236₈", "224₈"], explanation: "Langkah Pembahagian dengan 8:\n150 ÷ 8 = 18 baki 6\n18 ÷ 8 = 2 baki 2\n2 ÷ 8 = 0 baki 2\nBaca baki dari bawah ke atas ➔ 226₈" },
+            { type: "10to8", questionText: "300₁₀", instruction: "Tukarkan nombor Asas 10 berikut kepada Asas 8:", correctAnswer: "454₈", options: ["444₈", "454₈", "464₈", "354₈"], explanation: "Langkah Pembahagian dengan 8:\n300 ÷ 8 = 37 baki 4\n37 ÷ 8 = 4 baki 5\n4 ÷ 8 = 0 baki 4\nBaca baki dari bawah ke atas ➔ 454₈" },
+            { type: "10to8", questionText: "88₁₀", instruction: "Tukarkan nombor Asas 10 berikut kepada Asas 8:", correctAnswer: "130₈", options: ["120₈", "130₈", "138₈", "140₈"], explanation: "Langkah Pembahagian dengan 8:\n88 ÷ 8 = 11 baki 0\n11 ÷ 8 = 1 baki 3\n1 ÷ 8 = 0 baki 1\nBaca baki dari bawah ke atas ➔ 130₈" },
+            { type: "10to8", questionText: "500₁₀", instruction: "Tukarkan nombor Asas 10 berikut kepada Asas 8:", correctAnswer: "764₈", options: ["754₈", "764₈", "774₈", "664₈"], explanation: "Langkah Pembahagian dengan 8:\n500 ÷ 8 = 62 baki 4\n62 ÷ 8 = 7 baki 6\n7 ÷ 8 = 0 baki 7\nBaca baki dari bawah ke atas ➔ 764₈" },
+            { type: "8to10", questionText: "73₈", instruction: "Tukarkan nombor Asas 8 berikut kepada Asas 10:", correctAnswer: "59₁₀", options: ["59₁₀", "57₁₀", "61₁₀", "65₁₀"], explanation: "Pendaraban Mengikut Nilai Tempat (8¹, 8⁰):\n(7 × 8¹) + (3 × 8⁰)\n= 56 + 3 = 59₁₀" },
+            { type: "8to10", questionText: "145₈", instruction: "Tukarkan nombor Asas 8 berikut kepada Asas 10:", correctAnswer: "101₁₀", options: ["95₁₀", "101₁₀", "105₁₀", "111₁₀"], explanation: "Pendaraban Mengikut Nilai Tempat (8², 8¹, 8⁰):\n(1 × 8²) + (4 × 8¹) + (5 × 8⁰)\n= 64 + 32 + 5 = 101₁₀" },
+            { type: "8to10", questionText: "230₈", instruction: "Tukarkan nombor Asas 8 berikut kepada Asas 10:", correctAnswer: "152₁₀", options: ["152₁₀", "142₁₀", "162₁₀", "150₁₀"], explanation: "Pendaraban Mengikut Nilai Tempat (8², 8¹, 8⁰):\n(2 × 8²) + (3 × 8¹) + (0 × 8⁰)\n= 128 + 24 + 0 = 152₁₀" },
+            { type: "8to10", questionText: "52₈", instruction: "Tukarkan nombor Asas 8 berikut kepada Asas 10:", correctAnswer: "42₁₀", options: ["40₁₀", "42₁₀", "44₁₀", "50₁₀"], explanation: "Pendaraban Mengikut Nilai Tempat (8¹, 8⁰):\n(5 × 8¹) + (2 × 8⁰)\n= 40 + 2 = 42₁₀" },
+            { type: "8to10", questionText: "377₈", instruction: "Tukarkan nombor Asas 8 berikut kepada Asas 10:", correctAnswer: "255₁₀", options: ["245₁₀", "250₁₀", "255₁₀", "260₁₀"], explanation: "Pendaraban Mengikut Nilai Tempat (8², 8¹, 8⁰):\n(3 × 8²) + (7 × 8¹) + (7 × 8⁰)\n= 192 + 56 + 7 = 255₁₀" }
+        ];
+
+        let studentNama = "", studentKelas = "", currentQuestionIndex = 0, score = 0, answered = false;
+
+        function startQuiz(event) {
+            event.preventDefault();
+            studentNama = document.getElementById("input-nama").value.trim();
+            studentKelas = document.getElementById("input-kelas").value.trim();
+
+            if (!studentNama || !studentKelas) return;
+
+            document.getElementById("screen-setup").classList.add("hidden");
+            document.getElementById("screen-quiz").classList.remove("hidden");
+
+            currentQuestionIndex = 0;
+            score = 0;
+            document.getElementById("score-display").textContent = score;
+
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            answered = false;
+            const q = quizData[currentQuestionIndex];
+
+            document.getElementById("q-current").textContent = currentQuestionIndex + 1;
+            document.getElementById("q-category").textContent = q.type === "10to8" ? "Asas 10 → Asas 8" : "Asas 8 → Asas 10";
+            document.getElementById("q-instruction").textContent = q.instruction;
+            document.getElementById("q-text").textContent = q.questionText;
+
+            document.getElementById("progress-bar").style.width = `${((currentQuestionIndex) / quizData.length) * 100}%`;
+
+            document.getElementById("explanation-box").classList.add("hidden");
+            const btnNext = document.getElementById("btn-next");
+            btnNext.disabled = true;
+            btnNext.className = "btn-action w-full bg-slate-200 text-slate-400 font-bold py-3.5 px-6 rounded-2xl text-center font-fredoka text-base tracking-wide transition cursor-not-allowed";
+
+            const container = document.getElementById("options-container");
+            container.innerHTML = "";
+            q.options.forEach((opt) => {
+                const button = document.createElement("button");
+                button.className = "option-btn w-full p-4 rounded-2xl text-left font-bold text-slate-700 text-base flex items-center justify-between";
+                button.innerHTML = `<span>${opt}</span><i class="fa-regular fa-circle text-pink-300"></i>`;
+                button.onclick = () => selectAnswer(button, opt, q.correctAnswer, q.explanation);
+                container.appendChild(button);
+            });
+        }
+
+        function selectAnswer(selectedBtn, selectedOpt, correctOpt, explanation) {
+            if (answered) return;
+            answered = true;
+
+            const buttons = document.querySelectorAll("#options-container button");
+            
+            if (selectedOpt === correctOpt) {
+                score += 1;
+                document.getElementById("score-display").textContent = score;
+                selectedBtn.classList.add("correct");
+                selectedBtn.querySelector("i").className = "fa-solid fa-circle-check text-emerald-600 text-lg";
+            } else {
+                selectedBtn.classList.add("wrong");
+                selectedBtn.querySelector("i").className = "fa-solid fa-circle-xmark text-red-600 text-lg";
+
+                buttons.forEach(btn => {
+                    if (btn.textContent.trim().includes(correctOpt)) {
+                        btn.classList.add("correct");
+                        btn.querySelector("i").className = "fa-solid fa-circle-check text-emerald-600 text-lg";
+                    }
+                });
+            }
+
+            buttons.forEach(btn => btn.disabled = true);
+
+            document.getElementById("explanation-text").textContent = explanation;
+            document.getElementById("explanation-box").classList.remove("hidden");
+
+            const btnNext = document.getElementById("btn-next");
+            btnNext.disabled = false;
+            btnNext.className = "btn-action w-full bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 text-white font-bold py-3.5 px-6 rounded-2xl text-center font-fredoka text-base tracking-wide cursor-pointer";
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < quizData.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            document.getElementById("screen-quiz").classList.add("hidden");
+            document.getElementById("screen-result").classList.remove("hidden");
+
+            const percentage = Math.round((score / quizData.length) * 100);
+
+            document.getElementById("res-nama").textContent = studentNama;
+            document.getElementById("res-kelas").textContent = studentKelas;
+            document.getElementById("res-correct").textContent = `${score} / ${quizData.length}`;
+            document.getElementById("res-percentage").textContent = `${percentage}%`;
+
+            sendDataToGoogleSheet(studentNama, studentKelas, score, percentage);
+        }
+
+        function sendDataToGoogleSheet(nama, kelas, markah, peratus) {
+            const statusIcon = document.getElementById("status-icon");
+            const statusText = document.getElementById("status-text");
+
+            if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL === "GANTI_DENGAN_URL_WEB_APP_ANDA") {
+                statusIcon.className = "fa-solid fa-triangle-exclamation text-amber-500 text-xl";
+                statusText.className = "text-xs sm:text-sm text-amber-600 font-semibold";
+                statusText.textContent = "URL Google Sheet belum dikonfigurasi oleh Cikgu Wi.";
+                return;
+            }
+
+            fetch(GOOGLE_SCRIPT_URL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ nama, kelas, markah: `${markah}/${quizData.length}`, peratus })
+            })
+            .then(() => {
+                statusIcon.className = "fa-solid fa-circle-check text-emerald-600 text-xl";
+                statusText.className = "text-xs sm:text-sm text-emerald-600 font-semibold";
+                statusText.textContent = "Keputusan berjaya disimpan ke Google Sheet Cikgu Wi!";
+            })
+            .catch(() => {
+                statusIcon.className = "fa-solid fa-circle-xmark text-red-600 text-xl";
+                statusText.className = "text-xs sm:text-sm text-red-600 font-semibold";
+                statusText.textContent = "Gagal menyimpan keputusan. Semak sambungan internet.";
+            });
+        }
+
+        function restartQuiz() {
+            document.getElementById("screen-result").classList.add("hidden");
+            document.getElementById("screen-setup").classList.remove("hidden");
+            document.getElementById("form-setup").reset();
+        }
+    </script>
+</body>
+</html>
